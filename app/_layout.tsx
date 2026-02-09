@@ -17,6 +17,7 @@ function RootLayoutNav() {
     <Stack screenOptions={{ headerShown: false, animation: 'slide_from_right' }}>
       <Stack.Screen name="index" />
       <Stack.Screen name="game" />
+      <Stack.Screen name="multiplayer" />
       <Stack.Screen name="tutorial" />
       <Stack.Screen name="rules" />
       <Stack.Screen name="practice" />

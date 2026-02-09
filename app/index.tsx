@@ -18,6 +18,7 @@ const { width } = Dimensions.get('window');
 
 const MENU_ITEMS = [
   { id: 'play', label: 'Play Game', icon: 'play' as const, route: '/game', color: Colors.accent.teal, desc: 'vs Computer' },
+  { id: 'multiplayer', label: 'Multiplayer', icon: 'users' as const, route: '/multiplayer', color: '#E85D75', desc: 'Play with Friends' },
   { id: 'practice', label: 'Practice', icon: 'target' as const, route: '/practice', color: Colors.accent.gold, desc: 'Anagram Trainer' },
   { id: 'tutorial', label: 'Tutorial', icon: 'book-open' as const, route: '/tutorial', color: '#7C6BC4', desc: 'Learn the Rules' },
   { id: 'rules', label: 'Rules', icon: 'file-text' as const, route: '/rules', color: '#C4856B', desc: '2024 Reference' },
