@@ -4,6 +4,8 @@ import { registerRoutes } from "./routes";
 import * as fs from "fs";
 import * as path from "path";
 import cors from "cors";
+import http from "http";
+import { WebSocketServer } from "ws";
 
 const app = express();
 const log = console.log;
@@ -176,7 +178,7 @@ function configureExpoAndLanding(app: express.Application) {
     "templates",
     "landing-page.html",
   );
-  
+
   app.get("/health", (_req, res) => {
   res.json({ status: "ok", service: "wordcraft-server" });
 });
@@ -250,8 +252,31 @@ function setupErrorHandler(app: express.Application) {
 
   setupErrorHandler(app);
 
-  const port = parseInt(process.env.PORT || "5000", 10);
-  server.listen(port, "0.0.0.0", () => {
-  log(`express server serving on port ${port}`);
+  const httpServer = http.createServer(app);
+
+const wss = new WebSocketServer({ server: httpServer, path: "/ws" });
+
+wss.on("connection", (socket) => {
+  console.log("WebSocket client connected");
+
+  socket.on("message", (data) => {
+    const msg = data.toString();
+
+    // send message to all connected players
+    wss.clients.forEach((client) => {
+      if (client.readyState === 1) {
+        client.send(msg);
+      }
+    });
+  });
+
+  socket.on("close", () => {
+    console.log("WebSocket client disconnected");
+  });
+});
+
+const port = parseInt(process.env.PORT || "5000", 10);
+httpServer.listen(port, "0.0.0.0", () => {
+  console.log(`Server running on port ${port}`);
 });
 })();
