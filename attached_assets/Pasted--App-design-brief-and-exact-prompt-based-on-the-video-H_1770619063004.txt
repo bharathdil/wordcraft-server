@@ -1,0 +1,62 @@
+### App design brief and exact prompt (based on the video How to play Scrabble 2024 rules). 
+
+**Overview**  
+Design a mobile app that teaches and facilitates playing Scrabble using the 2024 rules: rule-driven gameplay, interactive tutorials, rule references, multiplayer matchmaking, scorekeeping, and an accessible practice mode for new players.
+
+**Exact prompt to paste into a design tool or give to a UI/UX designer (one copy, verbatim)**  
+Design a mobile-first Scrabble app that implements the 2024 official rules. The app must include: an interactive tutorial that walks new players through tile distribution, turn order, word validation, challenge rules, and scoring; a rule reference section with searchable rules and examples; a single-player mode with adjustable AI difficulty and move hints; real-time online multiplayer with matchmaking, private games, and chat; an accurate scorekeeper with tile tracking and endgame scoring; a practice mode for anagram drills and timed puzzles; accessible UI with clear contrast, large tappable tiles, and optional voice guidance; onboarding that teaches the 2024 rule changes step-by-step; polished, friendly visual design with a wooden board texture, high-contrast letter tiles, and micro-interactions for tile placement and scoring. Deliverables: clickable Figma prototype for iOS and Android, annotated component library, responsive layouts for phone and tablet, user flows for onboarding and matchmaking, and a short style guide (colors, typography, iconography, motion). Include acceptance criteria and edge-case flows for rule disputes and offline play.
+
+---
+
+### Key screens and components
+
+- **Home**: Play (Quick Match, Private Game), Tutorial, Practice, Rules, Profile, Settings.  
+- **Game board**: 15×15 grid; draggable tiles; tile rack; score panel; move preview with score estimate; challenge button; timer.  
+- **Tutorial**: Step-by-step interactive lessons; sandbox board for practice; short quizzes after each lesson.  
+- **Multiplayer lobby**: Matchmaking filters (rank, time control), invite link, chat, ready state.  
+- **Post-game**: Final scoring breakdown, tile bag summary, replay moves, rematch button.  
+- **Rules reference**: Searchable index, examples, quick tips, FAQ about 2024 changes.  
+- **Practice**: Anagram trainer, timed puzzles, AI sparring with hint levels.
+
+---
+
+### UX details and interactions
+
+- **Drag-and-drop** tiles with snap-to-grid and undo/redo.  
+- **Move preview** shows word validity and score before submitting.  
+- **Challenge flow**: when a player challenges, show a modal with the challenged word, dictionary lookup, and automatic resolution with clear feedback.  
+- **Notifications**: push for turn reminders, match invites, and rule updates.  
+- **Accessibility**: high-contrast theme, large-tile mode, screen-reader labels, and optional voice narration for moves and rules.
+
+---
+
+### Visual system and assets
+
+- **Color palette**: warm wood background (#E6D6C3); board accent teal (#0F8F8F); tile face off-white (#FFF8F0); tile letter dark charcoal (#222222); success green (#2E9A4A); error red (#D9534F).  
+- **Typography**: **Primary** — humanist sans for UI (e.g., Inter); **Display** — slab or serif for headings (optional).  
+- **Icons**: simple line icons for actions; tactile, rounded buttons for primary actions.  
+- **Motion**: subtle tile lift on drag, score pop animation, gentle transitions between screens.
+
+---
+
+### Acceptance criteria and deliverables
+
+- **Prototype**: Clickable Figma prototype covering onboarding, a full single-player game, and a multiplayer match flow.  
+- **Component library**: Buttons, tiles, modals, forms, color tokens, and typography scale.  
+- **User flows**: Onboarding, create/join game, play turn, challenge resolution, endgame scoring.  
+- **Edge cases**: Offline play fallback, reconnection handling, duplicate-word challenge resolution, tile-bag exhaustion.  
+- **Testing**: Usability script for 5 users to validate tutorial clarity and tile interactions.
+
+---
+
+### Next steps and recommended priorities
+
+1. Validate core gameplay interactions with a low-fidelity prototype (tile drag, move preview, scoring).  
+2. Build the interactive tutorial and rules reference content mapped to the 2024 rule changes.  
+3. Implement single-player AI and practice drills for early user retention.  
+4. Add multiplayer matchmaking and persistence once core mechanics are stable.
+
+If you want, I can now:  
+- produce a **Figma-ready component list** and layout grid; or  
+- write **user stories and acceptance tests** for each feature; or  
+- generate **copy for onboarding and tutorial steps** that explain the 2024 rule changes. Which of these should I create next?
