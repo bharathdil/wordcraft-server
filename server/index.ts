@@ -3,6 +3,7 @@ import type { Request, Response, NextFunction } from "express";
 import { registerRoutes } from "./routes";
 import * as fs from "fs";
 import * as path from "path";
+import cors from "cors";
 
 const app = express();
 const log = console.log;
@@ -14,7 +15,7 @@ declare module "http" {
 }
 
 function setupCors(app: express.Application) {
-  app.use((req, res, next) => {
+  /*app.use((req, res, next) => {
     const origins = new Set<string>();
 
     if (process.env.REPLIT_DEV_DOMAIN) {
@@ -49,7 +50,15 @@ function setupCors(app: express.Application) {
     }
 
     next();
-  });
+  });*/
+  app.use(
+    cors({
+      origin: "*",            // allow all origins (for now)
+      methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
+      allowedHeaders: ["Content-Type", "Authorization"],
+      credentials: true,
+    }),
+  );
 }
 
 function setupBodyParsing(app: express.Application) {
@@ -167,6 +176,11 @@ function configureExpoAndLanding(app: express.Application) {
     "templates",
     "landing-page.html",
   );
+  
+  app.get("/health", (_req, res) => {
+  res.json({ status: "ok", service: "wordcraft-server" });
+});
+
   const landingPageTemplate = fs.readFileSync(templatePath, "utf-8");
   const appName = getAppName();
 
@@ -237,14 +251,7 @@ function setupErrorHandler(app: express.Application) {
   setupErrorHandler(app);
 
   const port = parseInt(process.env.PORT || "5000", 10);
-  server.listen(
-    {
-      port,
-      host: "0.0.0.0",
-      reusePort: true,
-    },
-    () => {
-      log(`express server serving on port ${port}`);
-    },
-  );
+  server.listen(port, "0.0.0.0", () => {
+  log(`express server serving on port ${port}`);
+});
 })();
