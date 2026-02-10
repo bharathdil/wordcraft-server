@@ -240,43 +240,43 @@ function setupErrorHandler(app: express.Application) {
     return res.status(status).json({ message });
   });
 }
-
 (async () => {
   setupCors(app);
   setupBodyParsing(app);
   setupRequestLogging(app);
 
   configureExpoAndLanding(app);
-
-  const server = await registerRoutes(app);
-
+  await registerRoutes(app);
   setupErrorHandler(app);
 
+  // ✅ Create ONE HTTP server
   const httpServer = http.createServer(app);
 
-const wss = new WebSocketServer({ server: httpServer, path: "/ws" });
+  // ✅ Attach WebSocket to SAME server
+  const wss = new WebSocketServer({ server: httpServer, path: "/ws" });
 
-wss.on("connection", (socket) => {
-  console.log("WebSocket client connected");
+  wss.on("connection", (socket) => {
+    console.log("WebSocket client connected");
 
-  socket.on("message", (data) => {
-    const msg = data.toString();
+    socket.on("message", (data) => {
+      const msg = data.toString();
 
-    // send message to all connected players
-    wss.clients.forEach((client) => {
-      if (client.readyState === 1) {
-        client.send(msg);
-      }
+      wss.clients.forEach((client) => {
+        if (client.readyState === 1) {
+          client.send(msg);
+        }
+      });
+    });
+
+    socket.on("close", () => {
+      console.log("WebSocket client disconnected");
     });
   });
 
-  socket.on("close", () => {
-    console.log("WebSocket client disconnected");
-  });
-});
+// ✅ Render provides PORT
+  const PORT = Number(process.env.PORT || 5000);
 
-const port = parseInt(process.env.PORT || "5000", 10);
-httpServer.listen(port, "0.0.0.0", () => {
-  console.log(`Server running on port ${port}`);
-});
+  httpServer.listen(PORT, "0.0.0.0", () => {
+    console.log("Server running on port", PORT);
+  });
 })();
