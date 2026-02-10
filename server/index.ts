@@ -253,25 +253,81 @@ function setupErrorHandler(app: express.Application) {
   const httpServer = http.createServer(app);
 
   // ✅ Attach WebSocket to SAME server
-  const wss = new WebSocketServer({ server: httpServer, path: "/ws" });
+ const wss = new WebSocketServer({ server: httpServer, path: "/ws" });
 
-  wss.on("connection", (socket) => {
-    console.log("WebSocket client connected");
+type Client = {
+  id: string;
+  socket: any;
+  room?: string;
+  name?: string;
+};
 
-    socket.on("message", (data) => {
-      const msg = data.toString();
+const clients = new Map<string, Client>();
+const rooms = new Map<string, Client[]>();
 
-      wss.clients.forEach((client) => {
-        if (client.readyState === 1) {
-          client.send(msg);
-        }
+function randomCode() {
+  return Math.random().toString(36).substring(2, 8).toUpperCase();
+}
+
+wss.on("connection", (socket) => {
+  const id = Math.random().toString(36).slice(2);
+  clients.set(id, { id, socket });
+
+  console.log("WS Connected:", id);
+
+  socket.on("message", (raw) => {
+    const msg = JSON.parse(raw.toString());
+    const client = clients.get(id)!;
+
+    // CREATE ROOM
+    if (msg.type === "create_room") {
+      const code = randomCode();
+
+      client.room = code;
+      client.name = msg.name;
+
+      rooms.set(code, [client]);
+
+      socket.send(JSON.stringify({
+        type: "room_created",
+        code,
+        playerId: id,
+      }));
+    }
+
+    // JOIN ROOM
+    if (msg.type === "join_room") {
+      const room = rooms.get(msg.code);
+
+      if (!room) {
+        return socket.send(JSON.stringify({
+          type: "error",
+          message: "Room not found"
+        }));
+      }
+
+      client.room = msg.code;
+      client.name = msg.name;
+      room.push(client);
+
+      socket.send(JSON.stringify({
+        type: "room_joined",
+        code: msg.code,
+        playerId: id,
+      }));
+
+      // notify both players
+      room.forEach(c => {
+        c.socket.send(JSON.stringify({ type: "game_started" }));
       });
-    });
-
-    socket.on("close", () => {
-      console.log("WebSocket client disconnected");
-    });
+    }
   });
+
+  socket.on("close", () => {
+    clients.delete(id);
+    console.log("WS Disconnected:", id);
+  });
+});
 
 // ✅ Render provides PORT
   const PORT = Number(process.env.PORT || 5000);
