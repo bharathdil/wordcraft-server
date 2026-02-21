@@ -263,19 +263,84 @@ type Client = {
 };
 
 const clients = new Map<string, Client>();
-const rooms = new Map<string, Client[]>();
+//const rooms = new Map<string, Client[]>();
 
 function randomCode() {
   return Math.random().toString(36).substring(2, 8).toUpperCase();
 }
 
-wss.on("connection", (socket) => {
+/*wss.on("connection", (socket) => {
   const id = Math.random().toString(36).slice(2);
   clients.set(id, { id, socket });
 
-  console.log("WS Connected:", id);
+  console.log("WS Connected:", id);*/
+const rooms = new Map<
+  string,
+  { players: { id: string; name: string; ws: any }[] }
+>();
 
-  socket.on("message", (raw) => {
+function generateCode() {
+  return Math.random().toString(36).substring(2, 8).toUpperCase();
+}
+
+wss.on("connection", (ws) => {
+  const playerId = Math.random().toString(36).slice(2);
+  console.log("WS Connected: playerId", playerId);
+
+  ws.on("message", (raw) => {
+    let msg;
+    try {
+      msg = JSON.parse(raw.toString());
+    } catch {
+      return;
+    }
+
+    // ✅ CREATE ROOM
+    if (msg.type === "create_room") {
+      const code = generateCode();
+      rooms.set(code, { players: [{ id: playerId, name: msg.name, ws }] });
+
+      ws.send(
+        JSON.stringify({
+          type: "room_created",
+          code,
+          playerId,
+        })
+      );
+    }
+
+    // ✅ JOIN ROOM
+    if (msg.type === "join_room") {
+      const room = rooms.get(msg.code);
+      if (!room) {
+        ws.send(JSON.stringify({ type: "error", message: "Room not found" }));
+        return;
+      }
+
+      room.players.push({ id: playerId, name: msg.name, ws });
+
+      ws.send(
+        JSON.stringify({
+          type: "room_joined",
+          code: msg.code,
+          playerId,
+        })
+      );
+
+      // notify other player
+      room.players.forEach((p) => {
+        if (p.ws !== ws) {
+          p.ws.send(JSON.stringify({ type: "game_started" }));
+        }
+      });
+    }
+  });
+
+  ws.on("close", () => {
+    console.log("WebSocket disconnected");
+  });
+});
+ /* socket.on("message", (raw) => {
     const msg = JSON.parse(raw.toString());
     const client = clients.get(id)!;
 
@@ -328,6 +393,7 @@ wss.on("connection", (socket) => {
     console.log("WS Disconnected:", id);
   });
 });
+*/
 
 // ✅ Render provides PORT
   const PORT = Number(process.env.PORT || 5000);
