@@ -6,10 +6,11 @@ import { QueryClient, QueryFunction } from "@tanstack/react-query";
  * @returns {string} The API base URL
  */
 export function getApiUrl(): string {
-  const raw = process.env.EXPO_PUBLIC_DOMAIN;
-  if (__DEV__) {
-    return "http://localhost:5000";   // 👈 your local backend port
+  // Web local dev
+  if (typeof window !== "undefined" && window.location.hostname === "localhost") {
+    return "http://localhost:5000";   // 👈 must match backend port
   }
+  const raw = process.env.EXPO_PUBLIC_DOMAIN;
   if (!raw) {
     throw new Error("EXPO_PUBLIC_DOMAIN is not set");
   }
