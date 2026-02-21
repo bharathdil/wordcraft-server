@@ -7,7 +7,9 @@ import { QueryClient, QueryFunction } from "@tanstack/react-query";
  */
 export function getApiUrl(): string {
   const raw = process.env.EXPO_PUBLIC_DOMAIN;
-
+  if (__DEV__) {
+    return "http://localhost:5000";   // 👈 your local backend port
+  }
   if (!raw) {
     throw new Error("EXPO_PUBLIC_DOMAIN is not set");
   }

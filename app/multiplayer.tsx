@@ -166,11 +166,13 @@ export default function MultiplayerScreen() {
     wsRef.current = ws;
 
     ws.onmessage = (event) => {
+       console.log("WS message:", event.data);   // 👈 ADD THIS
       let msg: any;
       try { msg = JSON.parse(event.data as string); } catch { return; }
 
       switch (msg.type) {
         case 'room_created':
+          console.log("ROOM CREATED:", msg);   // 👈 ADD THIS
           setRoomCode(msg.code);
           playerIdRef.current = msg.playerId;
           setMode('game');
